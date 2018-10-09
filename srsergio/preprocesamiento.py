@@ -5,28 +5,24 @@ Created on Mon Oct  8 22:39:57 2018
 
 @author: serranos
 """
-import pandas
+import pandas as pd
 import urllib3
 
-def downloadfromURL(url,method="GET",path="./",filename="descarga",sep=",",delim="\n"):
+def procesaURL(url, method="GET", path="./", sep=",", delim="\n"):
     http = urllib3.PoolManager()
     response = http.request(method,url)
     if response.status != 200:
         print("No se ha podido descargar el fichero dela URL {}".format(url))
-        return None
     else:
         datos = response.data.decode('utf-8')
         lista=datos.split(delim)
-        outfile = path + "/" + filename + ".csv"
-        with open(outfile,"w") as outfile1:
-            for i in range(len(lista)):
-                outfile1.write(lista[i])
-                outfile1.write("\n")
-        
-        df=pandas.read_csv(outfile)
-        df.to_excel(path + "/" + filename + ".xls")
-        df.to_json(path + "/" + filename + ".json")
-    return df
+        cabecera=[]
+        cabecera.append(lista[0].split(sep))
+        #print(cabecera[0])
+        datos1=[]
+        for i in range(1,len(lista)):
+            datos1.append(lista[i].split(sep))
+        #print(datos1[0])
+        df = pd.DataFrame.from_records(datos1,columns=cabecera)
+        return df
 
-medals_df = downloadfromURL(url="http://winterolympicsmedals.com/medals.csv")
-medals_df.head()
