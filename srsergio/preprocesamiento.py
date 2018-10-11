@@ -26,3 +26,9 @@ def procesaURL(url, method="GET", path="./", sep=",", delim="\n"):
         df = pd.DataFrame.from_records(datos1,columns=cabecera)
         return df
 
+def crearDummies(df,nombreVar):
+    dummy_var = pd.get_dummies(df[nombreVar], prefix=nombreVar)
+    df = df.drop(columns=nombreVar)
+    df =pd.concat([df,dummy_var], axis=1)
+    return df
+
